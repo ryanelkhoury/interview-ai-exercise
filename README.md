@@ -101,7 +101,7 @@ Modified the RAG system to load all 7 StackOne OpenAPI specifications through th
 - `iam.json` - Identity & Access Management
 - `crm.json` - Customer Relationship Management
 - `marketing.json` - Marketing automation
-PLEASE NOTE THIS MAY TAKE ~20 MINUTES.
+PLEASE NOTE THIS MAY TAKE ~30 MINUTES.
 
 **Implementation:** [`ai_exercise/loading/document_loader.py:159-181`](ai_exercise/loading/document_loader.py#L159-L181)
 
@@ -187,7 +187,7 @@ make install
 # Start the API
 make dev-api
 
-# In another terminal, load all 7 OpenAPI specs, this may take 20+ mins
+# In another terminal, load all 7 OpenAPI specs, this may take 30+ mins
 curl http://localhost/load
 
 # Run evaluation

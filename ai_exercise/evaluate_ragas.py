@@ -32,7 +32,6 @@ def evaluate_rag_system() -> None:
             "How do I filter user assignments by status?",
             "What happens if I provide an invalid LMS account ID?",
             "How do I paginate through LMS courses?",
-
             # =====================
             # IAM (Identity & Access Management)
             # =====================
@@ -43,7 +42,6 @@ def evaluate_rag_system() -> None:
             "How do I expand related roles or groups when listing IAM users?",
             "What happens if I try to get a user that does not exist?",
             "How do I handle too many IAM requests?",
-
             # =====================
             # CRM (Customer Relationship Management)
             # =====================
@@ -56,7 +54,6 @@ def evaluate_rag_system() -> None:
             "How do I include custom fields when retrieving CRM contacts?",
             "What happens if a CRM request times out?",
             "How do I handle CRM rate limiting?",
-
             # =====================
             # Marketing (Email Templates)
             # =====================
@@ -67,7 +64,7 @@ def evaluate_rag_system() -> None:
             "How can I filter email templates updated after a certain date?",
             "What happens if I provide an invalid template ID?",
             "How do I paginate through email templates?",
-            "What should I do if my marketing API call times out?"
+            "What should I do if my marketing API call times out?",
         ],
         "ground_truth": [
             # =====================
@@ -75,51 +72,72 @@ def evaluate_rag_system() -> None:
             # =====================
             "Use GET /unified/lms/courses to list all LMS courses.",
             "Use GET /unified/lms/courses/{id} to retrieve a specific course by ID.",
-            "Use GET /unified/lms/courses with the 'filter[updated_after]' query parameter to filter courses updated after a specific date.",
-            "Use GET /unified/lms/users/{id}/assignments to list all assignments for a user.",
-            "Use POST /unified/lms/users/{id}/assignments to create a new assignment for a user.",
-            "Use GET /unified/lms/users/{id}/assignments with 'filter[status]' to filter assignments by status.",
-            "A 401 Unauthorized or 403 Forbidden error will be returned if the LMS account ID is invalid.",
-            "Use the 'next' query parameter in GET /unified/lms/courses to paginate through results.",
-
+            "Use GET /unified/lms/courses with the 'filter[updated_after]' "
+            "query parameter to filter courses updated after a specific date.",
+            "Use GET /unified/lms/users/{id}/assignments to list all "
+            "assignments for a user.",
+            "Use POST /unified/lms/users/{id}/assignments to create a new "
+            "assignment for a user.",
+            "Use GET /unified/lms/users/{id}/assignments with 'filter[status]' "
+            "to filter assignments by status.",
+            "A 401 Unauthorized or 403 Forbidden error will be returned if the "
+            "LMS account ID is invalid.",
+            "Use the 'next' query parameter in GET /unified/lms/courses to "
+            "paginate through results.",
             # =====================
             # IAM
             # =====================
             "Use GET /unified/iam/users to list all IAM users.",
-            "Use GET /unified/iam/users/{id} to get details of a specific IAM user.",
+            "Use GET /unified/iam/users/{id} to get details of a specific "
+            "IAM user.",
             "Use PATCH /unified/iam/users/{id} to update an IAM user.",
-            "Use GET /unified/iam/users with 'filter[updated_after]' to filter IAM users updated after a certain date.",
-            "Use the 'expand' query parameter (e.g., expand=roles,groups) in GET /unified/iam/users to expand related entities.",
-            "A 404 Not Found response will be returned if the requested user does not exist.",
-            "If too many IAM requests are sent, a 429 Too Many Requests response is returned.",
-
+            "Use GET /unified/iam/users with 'filter[updated_after]' to filter "
+            "IAM users updated after a certain date.",
+            "Use the 'expand' query parameter (e.g., expand=roles,groups) in "
+            "GET /unified/iam/users to expand related entities.",
+            "A 404 Not Found response will be returned if the requested user "
+            "does not exist.",
+            "If too many IAM requests are sent, a 429 Too Many Requests "
+            "response is returned.",
             # =====================
             # CRM
             # =====================
             "Use GET /unified/crm/contacts to list all CRM contacts.",
             "Use POST /unified/crm/contacts to create a new CRM contact.",
-            "Use GET /unified/crm/contacts/{id} to retrieve a specific CRM contact.",
+            "Use GET /unified/crm/contacts/{id} to retrieve a specific "
+            "CRM contact.",
             "Use PATCH /unified/crm/contacts/{id} to update a CRM contact.",
             "Use GET /unified/crm/accounts to list all CRM accounts.",
-            "Use GET /unified/crm/contacts with 'filter[updated_after]' to filter contacts updated after a given date.",
-            "Use the 'include' query parameter (e.g., include=custom_fields) in GET /unified/crm/contacts to include custom fields.",
-            "A 408 Request Timeout response indicates that the CRM request took too long to process.",
-            "If the request rate is too high, the API will return a 429 Too Many Requests response.",
-
+            "Use GET /unified/crm/contacts with 'filter[updated_after]' to "
+            "filter contacts updated after a given date.",
+            "Use the 'include' query parameter (e.g., include=custom_fields) "
+            "in GET /unified/crm/contacts to include custom fields.",
+            "A 408 Request Timeout response indicates that the CRM request "
+            "took too long to process.",
+            "If the request rate is too high, the API will return a "
+            "429 Too Many Requests response.",
             # =====================
             # Marketing
             # =====================
-            "Use GET /unified/marketing/templates/email to list all email templates.",
-            "Use POST /unified/marketing/templates/email to create a new email template.",
-            "Use GET /unified/marketing/templates/email/{id} to retrieve a specific email template by ID.",
-            "Use PATCH /unified/marketing/templates/email/{id} to update an existing email template.",
-            "Use GET /unified/marketing/templates/email with 'filter[updated_after]' to filter email templates updated after a certain date.",
-            "A 404 Not Found response will be returned if an invalid template ID is provided.",
-            "Use the 'next' query parameter in GET /unified/marketing/templates/email to paginate through results.",
-            "A 408 Request Timeout response indicates that the marketing API call took too long to process."
-        ]
+            "Use GET /unified/marketing/templates/email to list all "
+            "email templates.",
+            "Use POST /unified/marketing/templates/email to create a new "
+            "email template.",
+            "Use GET /unified/marketing/templates/email/{id} to retrieve a "
+            "specific email template by ID.",
+            "Use PATCH /unified/marketing/templates/email/{id} to update an "
+            "existing email template.",
+            "Use GET /unified/marketing/templates/email with "
+            "'filter[updated_after]' to filter email templates updated after "
+            "a certain date.",
+            "A 404 Not Found response will be returned if an invalid template "
+            "ID is provided.",
+            "Use the 'next' query parameter in GET "
+            "/unified/marketing/templates/email to paginate through results.",
+            "A 408 Request Timeout response indicates that the marketing API "
+            "call took too long to process.",
+        ],
     }
-
 
     contexts_list = []
     answers_list = []
@@ -136,9 +154,7 @@ def evaluate_rag_system() -> None:
 
         # Call the actual running API server via HTTP
         response = requests.post(
-            api_base_url,
-            json={"query": question, "chat_history": []},
-            timeout=30
+            api_base_url, json={"query": question, "chat_history": []}, timeout=30
         )
         response.raise_for_status()
         result = response.json()

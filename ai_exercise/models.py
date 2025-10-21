@@ -77,6 +77,7 @@ class EvaluationMetrics(BaseModel):
 
     class Config:
         """Allow field names with @ symbols via aliases."""
+
         populate_by_name = True
 
 

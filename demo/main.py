@@ -74,16 +74,16 @@ if prompt := st.chat_input("Which path gives me the candidate list?"):
             # Build chat history from session state (excluding the current prompt we just added)
             chat_history = [
                 {"role": msg["role"], "content": msg["content"]}
-                for msg in st.session_state.messages[:-1]  # Exclude initial assistant message and current user message
-                if msg["role"] != "assistant" or msg["content"] != "How can I help you?"  # Skip initial greeting
+                for msg in st.session_state.messages[
+                    :-1
+                ]  # Exclude initial assistant message and current user message
+                if msg["role"] != "assistant"
+                or msg["content"] != "How can I help you?"  # Skip initial greeting
             ]
 
             response = requests.post(
                 "http://localhost/chat",
-                json={
-                    "query": prompt,
-                    "chat_history": chat_history
-                }
+                json={"query": prompt, "chat_history": chat_history},
             )
             response.raise_for_status()
             result = response.json()
@@ -96,10 +96,9 @@ if prompt := st.chat_input("Which path gives me the candidate list?"):
                     {"role": "assistant", "content": "How can I help you?"},
                 ]
                 for history_msg in result["chat_history"]:
-                    st.session_state.messages.append({
-                        "role": history_msg["role"],
-                        "content": history_msg["content"]
-                    })
+                    st.session_state.messages.append(
+                        {"role": history_msg["role"], "content": history_msg["content"]}
+                    )
         except Exception as e:
             st.error(e)
             st.stop()

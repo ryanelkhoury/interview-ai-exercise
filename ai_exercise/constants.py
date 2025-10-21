@@ -29,7 +29,9 @@ class Settings(BaseSettings):
     collection_name: str = "documents"
     chunk_size: int = 1000
     k_neighbors: int = 5
-    distance_threshold: float = 2  # Max cosine distance for relevant results (0=identical, 2=opposite)
+    distance_threshold: float = (
+        2  # Max cosine distance for relevant results (0=identical, 2=opposite)
+    )
 
 
 SETTINGS = Settings()  # type: ignore

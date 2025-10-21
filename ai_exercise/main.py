@@ -1,11 +1,11 @@
 """FastAPI app creation, main API routes."""
 
+import tqdm
 from fastapi import FastAPI
 
 from ai_exercise.constants import SETTINGS, chroma_client, openai_client
 from ai_exercise.llm.completions import get_completion
 from ai_exercise.llm.embeddings import openai_ef
-import tqdm
 from ai_exercise.loading.document_loader import (
     add_documents,
     chunk_openapi_spec,
@@ -15,14 +15,13 @@ from ai_exercise.models import (
     ChatMessage,
     ChatOutput,
     ChatQuery,
-    HealthRouteOutput,
     Document,
+    HealthRouteOutput,
     LoadDocumentsOutput,
     # EvaluationOutput,  # Commented out until evaluator module is created
 )
 from ai_exercise.retrieval.retrieval import get_relevant_chunks
 from ai_exercise.retrieval.vector_store import create_collection
-# from ai_exercise.evaluation.evaluator import RetrievalEvaluator  # Module doesn't exist yet
 
 app = FastAPI()
 
@@ -34,11 +33,12 @@ def health_check_route() -> HealthRouteOutput:
     """Health check route to check that the API is up."""
     return HealthRouteOutput(status="ok")
 
+
 @app.get("/load")
 async def load_docs_route() -> LoadDocumentsOutput:
-    """
-    Fetch all OpenAPI specs, chunk them, build embedding-ready docs,
-    and load them into the vector store.
+    """Fetch all OpenAPI specs, chunk them, build embedding-ready docs.
+
+    Loads them into the vector store.
     """
     global collection  # Declare global at the start of the function
 
@@ -52,10 +52,12 @@ async def load_docs_route() -> LoadDocumentsOutput:
             # Delete the collection and recreate it
             chroma_client.delete_collection(name=SETTINGS.collection_name)
             # Recreate the collection with the same settings
-            collection = create_collection(chroma_client, openai_ef, SETTINGS.collection_name)
+            collection = create_collection(
+                chroma_client, openai_ef, SETTINGS.collection_name
+            )
             print("✅ Collection cleared and recreated")
         else:
-            print("ℹ️  Collection is already empty")
+            print("INFO: Collection is already empty")
     except Exception as e:
         print(f"⚠️  Error clearing collection: {e}")
 
@@ -78,19 +80,18 @@ async def load_docs_route() -> LoadDocumentsOutput:
             "source_spec": chunk["source_spec"],
             "method": chunk["method"],
             "path": chunk["path"],
-            "chunk_id": f"chunk_{i+1}"
+            "chunk_id": f"chunk_{i+1}",
         }
 
         # Create Document
         documents.append(
             Document(
-                page_content=chunk["text_for_embedding"].strip(),
-                metadata=doc_metadata
+                page_content=chunk["text_for_embedding"].strip(), metadata=doc_metadata
             )
         )
 
     print(f"✅ Ready {len(documents)} documents for embedding.\n")
-    
+
     # 5️⃣ Optionally split long documents into smaller parts
     # documents = split_docs(documents)
 
@@ -110,16 +111,18 @@ async def load_docs_route() -> LoadDocumentsOutput:
 
 @app.post("/chat")
 def chat_route(chat_query: ChatQuery) -> ChatOutput:
-    """
-    RAG chat route with query rewriting.
+    """RAG chat route with query rewriting.
+
     Steps:
     1. Rewrite user query using LLM.
     2. Retrieve relevant docs from vector store.
     3. Build prompt and get final completion.
     """
-
     print(f"💬 Incoming user query: {chat_query.query}")
-    messages = '\n\n'.join([f"{message.role}: {message.content}" for message in chat_query.chat_history])
+    chat_history = chat_query.chat_history or []
+    messages = "\n\n".join(
+        [f"{message.role}: {message.content}" for message in chat_history]
+    )
 
     # --- 1️⃣ Rewrite the query for better retrieval
     rewrite_prompt = f"""
@@ -127,9 +130,12 @@ def chat_route(chat_query: ChatQuery) -> ChatOutput:
         \n\nINPUT\n=====\nConversation History\n--------------------
         \n{messages}\n\n
         TASK\n====\n
-        Rewrite the **Latest User Message** so that it can be understood entirely on its own.
-        \n1. Replace every pronoun **and every vague noun phrase** with a fully explicit description drawn from the conversation.
-        \n2. Do **not** add explanations, salutations, quotation marks, or mention the rewrite process.
+        Rewrite the **Latest User Message** so that it can be understood
+        entirely on its own.
+        \n1. Replace every pronoun **and every vague noun phrase** with a
+        fully explicit description drawn from the conversation.
+        \n2. Do **not** add explanations, salutations, quotation marks, or
+        mention the rewrite process.
         \n3. Output **only** the rewritten sentence or question—nothing else.
 
         Original question:
@@ -143,7 +149,7 @@ def chat_route(chat_query: ChatQuery) -> ChatOutput:
     try:
         rewritten_query = get_completion(
             client=openai_client,
-            messages=[{'role': 'user', 'content': rewrite_prompt}],
+            messages=[{"role": "user", "content": rewrite_prompt}],
             model=SETTINGS.openai_model,
         ).strip()
     except Exception as e:
@@ -152,10 +158,15 @@ def chat_route(chat_query: ChatQuery) -> ChatOutput:
 
     # Get relevant chunks from the collection using both rewritten and original queries
     print(f"\n🔍 Searching with rewritten query: {rewritten_query}")
-    hits_rewritten = get_relevant_chunks(collection=collection, query=rewritten_query, k=SETTINGS.k_neighbors)
+    hits_rewritten = get_relevant_chunks(
+        collection=collection, query=rewritten_query, k=SETTINGS.k_neighbors
+    )
 
     # print(f"🔍 Searching with original query: {chat_query.query}")
-    # hits_original = get_relevant_chunks(collection=collection, query=chat_query.query, k=SETTINGS.k_neighbors)
+    # hits_original = get_relevant_chunks(
+    #     collection=collection, query=chat_query.query,
+    #     k=SETTINGS.k_neighbors
+    # )
 
     # Combine results from both queries
     all_hits = hits_rewritten
@@ -168,7 +179,7 @@ def chat_route(chat_query: ChatQuery) -> ChatOutput:
 
     for hit in all_hits:
         chunk_text = hit.get("document", "")
-        distance = hit.get("distance", float('inf'))
+        distance = hit.get("distance", float("inf"))
 
         print(f"  Distance: {distance:.4f} | Text preview: {chunk_text[:100]}...")
 
@@ -176,18 +187,21 @@ def chat_route(chat_query: ChatQuery) -> ChatOutput:
         # Lower distance = more similar (0=identical, higher=less similar)
         if distance <= SETTINGS.distance_threshold and chunk_text not in seen:
             seen.add(chunk_text)
-            context_texts.append(hit.get('document', ''))
+            context_texts.append(hit.get("document", ""))
             relevant_chunks.append(hit)
             # print(f"  ✓ Similarity: {similarity_pct:.1f}% | {method.upper()} {path}")
         elif distance > SETTINGS.distance_threshold:
             filtered_count += 1
 
-    print(f"📚 Retrieved {len(relevant_chunks)} relevant chunks ({filtered_count} filtered out)")
+    print(
+        f"📚 Retrieved {len(relevant_chunks)} relevant chunks "
+        f"({filtered_count} filtered out)"
+    )
 
     # Debug: Print the actual chunks retrieved
     for i, chunk in enumerate(relevant_chunks[:3]):  # Show first 3
-        distance = chunk.get('distance', 'N/A')
-        text_preview = chunk.get('document', '')[:150]
+        distance = chunk.get("distance", "N/A")
+        text_preview = chunk.get("document", "")[:150]
         print(f"  Chunk {i+1} (distance={distance:.4f}): {text_preview}...")
 
     context = "\n\n".join(context_texts)
