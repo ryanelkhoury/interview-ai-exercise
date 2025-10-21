@@ -85,3 +85,28 @@ Have a look in `ai_exercise/constants.py`. Then check out the server routes in `
 - Try different embeddings models
 - Other types of models which may be relevant
 - How else could you store the data for better retrieval?
+
+## Assignment Submission
+
+### What I Implemented
+
+#### 1. Multi-Spec Knowledge Base
+The RAG system now loads all 7 StackOne OpenAPI specs (stackone, hris, ats, lms, iam, crm, marketing) via the `/load` endpoint.
+
+#### 2. Evaluation Framework
+- Built Ragas-based evaluation with 32 test queries
+- Measures 4 key metrics: context precision, recall, faithfulness, answer relevancy
+- Run with: `make evaluate`
+- See [evaluation_guide.md](evaluation_guide.md) for details
+
+#### 3. Retrieval Improvements Implemented
+- **Contextual Retrieval**: Each chunk is contextualized using LLM before embedding
+- **Query Rewriting**: User queries are rewritten for better semantic matching
+- **Smart Chunking**: Separate chunks for endpoints, schemas, and security definitions
+- **Distance Filtering**: Filters out irrelevant results based on embedding distance
+
+#### 4. Future Improvements
+See [improvements.md](improvements.md) for detailed suggestions on:
+- Re-ranking with cross-encoders
+- Hybrid search (BM25 + semantic)
+- Production readiness (retry logic, caching, monitoring, etc.)
