@@ -2,11 +2,6 @@
 
 This document outlines what could be done to further improve retrieval quality and make the system production-ready.
 
-## What's Already Implemented
-
-### Retry Mechanisms ✅
-Implemented retry logic with exponential backoff for all OpenAI API calls using the `tenacity` library. This prevents transient network failures from breaking the system.
-
 ---
 
 ## Retrieval Quality Improvements
@@ -43,6 +38,8 @@ Upgrade from `text-embedding-3-small` to `text-embedding-3-large`. Larger models
 ### Robustness & Reliability
 
 **Circuit Breakers:** Fail fast when external services are down instead of accumulating timeouts. Prevents cascading failures.
+
+**Retry Mechanisms:** Retry logic with exponential backoff for all OpenAI API calls using the `tenacity` library. This prevents transient network failures from breaking the system.
 
 **Fallback LLM Providers:** Automatically switch to backup providers (OpenAI → Anthropic → local model) when primary fails. Increases uptime.
 
