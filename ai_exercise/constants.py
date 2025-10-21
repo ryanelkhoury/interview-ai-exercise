@@ -29,9 +29,7 @@ class Settings(BaseSettings):
     collection_name: str = "documents"
     chunk_size: int = 1000
     k_neighbors: int = 5
-
-    # You will want to point towards all of the specs not just this one
-    docs_url: str = "https://docs.stackone.com/openapi/646b2d607eeee7006f8898bf"
+    distance_threshold: float = 2  # Max cosine distance for relevant results (0=identical, 2=opposite)
 
 
 SETTINGS = Settings()  # type: ignore
