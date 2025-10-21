@@ -26,7 +26,7 @@ start-api:
 	docker compose up
 
 dev-api:
-	uv run ai_exercise/main.py
+	PYTHONPATH=. uv run ai_exercise/main.py
 
 ########################################################################################################################
 # Streamlit

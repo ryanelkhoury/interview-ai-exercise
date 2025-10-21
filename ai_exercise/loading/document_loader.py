@@ -49,7 +49,6 @@ def get_contextual_retrieval(specification: dict, chunk: str) -> str:
     improving search retrieval of the chunk. Answer only with the succinct context and nothing else. 
     """
 
-    print('done')
     try:
         return get_completion(
             client=openai_client,

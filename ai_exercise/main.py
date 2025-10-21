@@ -5,12 +5,11 @@ from fastapi import FastAPI
 from ai_exercise.constants import SETTINGS, chroma_client, openai_client
 from ai_exercise.llm.completions import get_completion
 from ai_exercise.llm.embeddings import openai_ef
+import tqdm
 from ai_exercise.loading.document_loader import (
     add_documents,
-    build_embedding_text,
     chunk_openapi_spec,
     get_json_data,
-    split_docs,
 )
 from ai_exercise.models import (
     ChatMessage,
@@ -65,7 +64,7 @@ async def load_docs_route() -> LoadDocumentsOutput:
     all_chunks = []
 
     # 2️⃣ Chunk each spec
-    for spec in specs:
+    for spec in tqdm.tqdm(specs):
         chunks = chunk_openapi_spec(spec)
         all_chunks.extend(chunks)
 
